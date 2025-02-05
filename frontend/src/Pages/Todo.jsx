@@ -241,7 +241,7 @@ export default function TaskManager() {
           return handleError("You need to be logged in first!");
         }
   
-        const response = await axios.get(`https://deployed-react-app-backend-pa7mmp1uz.vercel.app/tasks/all/${userId}`, {
+        const response = await axios.get(`https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/tasks/all/${userId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,  // Assuming you're storing the token here
           },
@@ -346,7 +346,7 @@ Keep each section concise but informative.`;
       }
   
       const response = await axios.post(
-        "https://deployed-react-app-backend-pa7mmp1uz.vercel.app/tasks/add",  
+        "https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/tasks/add",  
         { tasks: taskData, userId },  // Send the entire task list with userId
         {
           headers: {

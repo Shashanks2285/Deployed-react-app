@@ -1,5 +1,6 @@
 
 import { Box } from '@mui/material';
+import { useState } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 import Home from './Pages/Home';
@@ -17,7 +18,7 @@ function App() {
   const location = useLocation();
   const noHeaderFooterPaths = ['/', '/login', '/signup'];
   const showHeaderFooter = !noHeaderFooterPaths.includes(location.pathname);
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   
   const PrivateRoute = ({ element }) => {
     return isAuthenticated ? element : <Navigate to="/login" />;

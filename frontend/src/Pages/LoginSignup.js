@@ -213,7 +213,7 @@ function LoginSignup() {
       return handleError("Email and password are required.");
     }
     try {
-      const response = await fetch("https://deployed-react-app-backend-pa7mmp1uz.vercel.app/authentication/login", {
+      const response = await fetch("https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/authentication/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -246,7 +246,7 @@ function LoginSignup() {
       return handleError("All fields are required.");
     }
     try {
-      const response = await fetch("https://deployed-react-app-backend-pa7mmp1uz.vercel.app/authentication/signup", {
+      const response = await fetch("https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/authentication/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
