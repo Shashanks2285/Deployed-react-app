@@ -1,0 +1,61 @@
+.about-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f3f4f6;
+  }
+  
+  .about-card {
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 60rem;
+    border-radius: 0.5rem;
+    background-color: #fff;
+  }
+  
+  .about-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .about-icon {
+    margin-right: 0.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+  
+  .about-description {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+  
+  .about-content {
+    margin-top: 1rem;
+  }
+  
+  .about-text {
+    font-size: 1rem;
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+  
+  .about-list {
+    list-style-type: disc;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .about-list-item {
+    margin-bottom: 0.5rem;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .about-list-item:hover {
+    transform: scale(1.05);
+  }
