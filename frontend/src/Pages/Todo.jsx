@@ -334,7 +334,7 @@ export default function TaskManager() {
           return handleError("You need to be logged in first!");
         }
 
-        const response = await axios.get(`http://localhost:8510/tasks/all/${userId}`, {
+        const response = await axios.get(`https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/tasks/all/${userId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Assuming you're storing the token here
           },
@@ -441,7 +441,7 @@ export default function TaskManager() {
       }
 
       const response = await axios.post(
-        "http://localhost:8510/tasks/add",
+        "https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/tasks/add",
         { tasks: taskData, userId },
         {
           headers: {
