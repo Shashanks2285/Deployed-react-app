@@ -162,5 +162,5 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-For questions or further information, please contact [Your Name](mailto:your.email@example.com).
+For questions or further information, please contact [Shashank](mailto:shashankshekharlkrmit1@gmail.com).
 
