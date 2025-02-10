@@ -1,10 +1,14 @@
-// import { useState } from "react";
+
+// import { useState, useEffect } from "react";
 // import { motion } from "framer-motion";
 // import CustomButton from "./components/ui/Button";
 // import CustomCard from "./components/ui/Card";
 // import CustomInput from "./components/ui/Input";
 // import { Trash } from "lucide-react";
 // import { GoogleGenerativeAI } from "@google/generative-ai";
+// import { ToastContainer } from "react-toastify";
+// import { handleError, handleSuccess } from "../utils";
+// import axios from "axios";
 
 // const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 
@@ -14,14 +18,45 @@
 //   const [nextId, setNextId] = useState(1);
 //   const [isFetching, setIsFetching] = useState(false);
 
+//   // Fetch tasks from the backend when the user logs in
+//   useEffect(() => {
+//     const fetchTasks = async () => {
+//       try {
+//         const userId = localStorage.getItem("userId");  // Assuming you store the userId here
+//         if (!userId) {
+//           return handleError("You need to be logged in first!");
+//         }
+  
+//         const response = await axios.get(`http://localhost:8510/tasks/all/${userId}`, {
+//           headers: {
+//             Authorization: `Bearer ${localStorage.getItem("authToken")}`,  // Assuming you're storing the token here
+//           },
+//         });
+  
+//         if (response.status === 200 && response.data.success) {
+//           setTasks(response.data.tasks || []); // Map to tasks array
+//         } else {
+//           handleError("Failed to fetch tasks.");
+//         }
+//       } catch (error) {
+//         console.error("Error fetching tasks:", error);
+//         handleError("Failed to fetch tasks.");
+//       }
+//     };
+  
+//     fetchTasks();
+//   }, []);
+
+//   // Add new task to the list
 //   const addTask = () => {
 //     if (taskInput.trim()) {
-//       setTasks([...tasks, { id: nextId, text: taskInput, aiResponse: null }]);
+//       setTasks([...tasks, { id: nextId, title: taskInput }]);
 //       setTaskInput("");
 //       setNextId(nextId + 1);
 //     }
 //   };
 
+//   // Remove a task from the list
 //   const removeTask = (id) => {
 //     setTasks(tasks.filter((task) => task.id !== id));
 //   };
@@ -29,13 +64,13 @@
 //   const simulateAIResponse = async (id) => {
 //     const task = tasks.find((task) => task.id === id);
 //     if (!task || isFetching) return;
-
+//     console.log(API_KEY);
 //     const genAI = new GoogleGenerativeAI(API_KEY);
 //     setIsFetching(true);
 
 //     try {
 //       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-//       const prompt = `For the target muscle group: ${task.text}
+//       const prompt = `For the target muscle group: ${task.title}
 
 // 1. Recommended Exercises:
 // - List 3-4 effective exercises
@@ -48,35 +83,68 @@
 
 // 3. Additional Tips:
 // - One recovery tip
-// - One training frequency suggestion
-
-// Keep each section concise but informative.`;
+// - One training frequency suggestion`;
 
 //       const result = await model.generateContent(prompt);
-//       const response = await result.response;
-//       const text = response.text();
+//       const text = await result.response.text();
 
-//       // Parse the response into sections
-//       const sections = text.split('\n\n').filter(section => section.trim());
+//       const sections = text
+//       .split("\n\n")
+//       .filter((section) => section.trim())
+//       .map((section) => section.replace(/\*+/g, "").trim());
 
 //       setTasks(
 //         tasks.map((t) =>
-//           t.id === id
-//             ? { ...task, aiResponse: sections }
-//             : t
+//           t.id === id ? { ...task, aiResponse: sections } : t
 //         )
 //       );
 //     } catch (error) {
 //       console.error("Error generating AI response:", error);
 //       setTasks(
 //         tasks.map((t) =>
-//           t.id === id
-//             ? { ...task, aiResponse: ["Error: Failed to fetch response."] }
-//             : t
+//           t.id === id ? { ...task, aiResponse: ["Error: Failed to fetch response."] } : t
 //         )
 //       );
 //     } finally {
 //       setIsFetching(false);
+//     }
+//   };
+
+//   // Save tasks to the backend
+//   const saveTasks = async () => {
+//     try {
+//       // Prepare the task data (no AI responses are saved)
+//       const taskData = tasks.map((task) => ({
+//         title: task.title,  // Send only the title (text) and description (empty for now)
+//         description: "",
+//       }));
+  
+//       const userId = localStorage.getItem("userId");  // Assuming you're storing the userId here
+//       const token = localStorage.getItem("authToken");
+  
+//       if (!userId) {
+        
+//         return handleError("You need to be logged in first!");
+//       }
+  
+//       const response = await axios.post(
+//         "http://localhost:8510/tasks/add",  
+//         { tasks: taskData, userId },  // Send the entire task list with userId
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,  // Send the token in the request header
+//           },
+//         }
+//       );
+  
+//       if (response.status === 200) {
+//         handleSuccess("Tasks saved successfully!");
+//       } else {
+//         handleError("Failed to save tasks. Please try again.");
+//       }
+//     } catch (error) {
+//       console.error("Error saving tasks:", error);
+//       handleError("Failed to save tasks. Please try again.");
 //     }
 //   };
 
@@ -94,6 +162,7 @@
 //         borderRadius: "0.5rem",
 //         minHeight: "20vh",
 //         width: "auto",
+//         overflow: "scroll",
 //       }}
 //       initial={{ opacity: 0 }}
 //       animate={{ opacity: 1 }}
@@ -126,7 +195,10 @@
 //               placeholder="Add a muscle group"
 //               style={{ flexGrow: 2, padding: "auto" }}
 //             />
-//             <CustomButton onClick={addTask} style={{ backgroundColor: "red", color: "white" }}>
+//             <CustomButton
+//               onClick={addTask}
+//               style={{ backgroundColor: "red", color: "white" }}
+//             >
 //               +
 //             </CustomButton>
 //           </motion.div>
@@ -158,7 +230,9 @@
 //               transition={{ duration: 0.5, delay: 0.4 + task.id * 0.05 }}
 //             >
 //               <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-//                 <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>{task.text}</p>
+//                 <p style={{ fontSize: "1.125rem", fontWeight: "bold" }}>
+//                   {task.title}
+//                 </p>
 //               </div>
 //               {task.aiResponse && (
 //                 <div
@@ -170,14 +244,14 @@
 //                 >
 //                   {task.aiResponse.map((section, index) => (
 //                     <div key={index} style={{ marginBottom: "0.75rem" }}>
-//                       {section.split('\n').map((line, lineIndex) => (
-//                         <p 
-//                           key={lineIndex} 
-//                           style={{ 
+//                       {section.split("\n").map((line, lineIndex) => (
+//                         <p
+//                           key={lineIndex}
+//                           style={{
 //                             margin: "0.25rem 0",
 //                             fontSize: "1rem",
-//                             fontWeight: line.endsWith(':') ? "600" : "normal",
-//                             paddingLeft: line.startsWith('-') ? "1rem" : "0"
+//                             fontWeight: line.endsWith(":") ? "600" : "normal",
+//                             paddingLeft: line.startsWith("-") ? "1rem" : "0",
 //                           }}
 //                         >
 //                           {line}
@@ -207,11 +281,30 @@
 //             </motion.div>
 //           ))}
 //         </motion.div>
+
+//         {/* Save Tasks Button */}
+//         <motion.div
+//           style={{
+//             marginTop: "1rem",
+//             display: "flex",
+//             justifyContent: "center",
+//           }}
+//           initial={{ opacity: 0 }}
+//           animate={{ opacity: 1 }}
+//           transition={{ duration: 0.5, delay: 0.5 }}
+//         >
+//           <CustomButton
+//             onClick={saveTasks}
+//             style={{ backgroundColor: "green", color: "white" }}
+//           >
+//             Save All Tasks
+//           </CustomButton>
+//         </motion.div>
 //       </motion.div>
+//       <ToastContainer />
 //     </motion.div>
 //   );
 // }
-
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -236,19 +329,24 @@ export default function TaskManager() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const userId = localStorage.getItem("userId");  // Assuming you store the userId here
+        const userId = localStorage.getItem("userId"); // Assuming you store the userId here
         if (!userId) {
           return handleError("You need to be logged in first!");
         }
-  
-        const response = await axios.get(`https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/tasks/all/${userId}`, {
+
+        const response = await axios.get(`http://localhost:8510/tasks/all/${userId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("authToken")}`,  // Assuming you're storing the token here
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Assuming you're storing the token here
           },
         });
-  
+
         if (response.status === 200 && response.data.success) {
-          setTasks(response.data.tasks || []); // Map to tasks array
+          // Transform fetched tasks so that each has an `id` property (using `_id` from backend)
+          const tasksWithId = (response.data.tasks || []).map((task) => ({
+            ...task,
+            id: task._id,
+          }));
+          setTasks(tasksWithId);
         } else {
           handleError("Failed to fetch tasks.");
         }
@@ -257,7 +355,7 @@ export default function TaskManager() {
         handleError("Failed to fetch tasks.");
       }
     };
-  
+
     fetchTasks();
   }, []);
 
@@ -275,11 +373,10 @@ export default function TaskManager() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  // Simulate AI response for a task
   const simulateAIResponse = async (id) => {
     const task = tasks.find((task) => task.id === id);
     if (!task || isFetching) return;
-
+    console.log(API_KEY);
     const genAI = new GoogleGenerativeAI(API_KEY);
     setIsFetching(true);
 
@@ -298,20 +395,19 @@ export default function TaskManager() {
 
 3. Additional Tips:
 - One recovery tip
-- One training frequency suggestion
-
-Keep each section concise but informative.`;
+- One training frequency suggestion`;
 
       const result = await model.generateContent(prompt);
       const text = await result.response.text();
 
-      const sections = text.split('\n\n').filter(section => section.trim());
+      const sections = text
+        .split("\n\n")
+        .filter((section) => section.trim())
+        .map((section) => section.replace(/\*+/g, "").trim());
 
       setTasks(
         tasks.map((t) =>
-          t.id === id
-            ? { ...task, aiResponse: sections }
-            : t
+          t.id === id ? { ...task, aiResponse: sections } : t
         )
       );
     } catch (error) {
@@ -333,28 +429,27 @@ Keep each section concise but informative.`;
     try {
       // Prepare the task data (no AI responses are saved)
       const taskData = tasks.map((task) => ({
-        title: task.title,  // Send only the title (text) and description (empty for now)
+        title: task.title, // Send only the title and an empty description for now
         description: "",
       }));
-  
-      const userId = localStorage.getItem("userId");  // Assuming you're storing the userId here
+
+      const userId = localStorage.getItem("userId"); // Assuming you're storing the userId here
       const token = localStorage.getItem("authToken");
-  
+
       if (!userId) {
-        
         return handleError("You need to be logged in first!");
       }
-  
+
       const response = await axios.post(
-        "https://deployed-react-a-git-499ccd-shashank-shekhars-projects-3a3ebe4e.vercel.app/tasks/add",  
-        { tasks: taskData, userId },  // Send the entire task list with userId
+        "http://localhost:8510/tasks/add",
+        { tasks: taskData, userId },
         {
           headers: {
-            Authorization: `Bearer ${token}`,  // Send the token in the request header
+            Authorization: `Bearer ${token}`, // Send the token in the request header
           },
         }
       );
-  
+
       if (response.status === 200) {
         handleSuccess("Tasks saved successfully!");
       } else {
@@ -523,3 +618,4 @@ Keep each section concise but informative.`;
     </motion.div>
   );
 }
+
